@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface DataType {
   _id: number;
@@ -45,59 +46,33 @@ export default function Home() {
 
   const getDatas = async () => {
     setLoading(true);
-    // HTTP Get 메서드 로직 여기에 추가!
-    setData([...data, ...fetchData]);
-    setPage(page + 1);
-    // HTTP Get 메서드 로직 여기에 추가!
-    setLoading(false);
-
+    try {
+      // HTTP Get 메서드 로직 여기에 추가!
+      setData([...data, ...fetchData]);
+      setPage(page + 1);
+      // HTTP Get 메서드 로직 여기에 추가!
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
     return;
   };
 
-  const handleScroll = async () => {
-    if (containerRef.current) {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
-
-      if (scrollTop + clientHeight >= scrollHeight) {
-        await getDatas();
-      }
-    }
-  };
-
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [data]);
-
-  useEffect(() => {
+    // 초기 데이터 로드
     getDatas();
   }, []);
 
   return (
-    <div
-      className={styles.container}
-      ref={containerRef}
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflowY: "auto",
-      }}
-    >
-      {loading ? (
-        <div>Data is being fetched now...</div>
-      ) : (
-        data.map((data, index) => (
-          <div key={index}>
+    <div className={styles.container} ref={containerRef}>
+      <InfiniteScroll
+        dataLength={data.length} // 데이터 개수
+        next={getDatas} // 다음 데이터 로드 함수
+        hasMore={true} // 무한 스크롤링 여부
+        loader={<h4>Loading...</h4>} // 로딩중 표시
+      >
+        {data.map((data, index) => (
+          <div key={index} className={styles.card}>
             <Image
               src={data.imgUrl}
               alt={`${data._id}`}
@@ -106,8 +81,8 @@ export default function Home() {
               height={300}
             />
           </div>
-        ))
-      )}
+        ))}
+      </InfiniteScroll>
     </div>
   );
 }
