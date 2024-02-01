@@ -1,13 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
-
-interface DataType {
-  _id: number;
-  imgUrl: string;
-}
 
 const fetchData = [
   {
@@ -37,77 +32,48 @@ const fetchData = [
   },
 ];
 
+interface DataType {
+  _id: number;
+  imgUrl: string;
+}
+
 export default function Home() {
-  const [data, setData] = useState<DataType[]>([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Array<DataType>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const getDatas = async () => {
-    setLoading(true);
-    // HTTP Get 메서드 로직 여기에 추가!
-    setData([...data, ...fetchData]);
-    setPage(page + 1);
-    // HTTP Get 메서드 로직 여기에 추가!
-    setLoading(false);
-
-    return;
-  };
-
-  const handleScroll = async () => {
-    if (containerRef.current) {
-      const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
-
-      if (scrollTop + clientHeight >= scrollHeight) {
-        await getDatas();
-      }
-    }
+  const getData = async (fetchingData: Array<DataType>) => {
+    // HTTP 가상 Network Get Method 로직
+    await new Promise<DataType[]>((resolve, reject) =>
+      setTimeout(() => {
+        resolve(fetchingData);
+        reject("Fetch Data Failed!!");
+      }, 1000)
+    )
+      .then((result) => setData([...data, ...result]))
+      .catch((error) => console.log(error));
+    // HTTP 가상 Network Get Method 로직
   };
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.addEventListener("scroll", handleScroll);
-    }
+      const { scrollHeight, clientHeight, scrollTop } = containerRef.current;
 
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("scroll", handleScroll);
+      if (scrollTop + clientHeight >= scrollHeight) {
+        getData(fetchData);
       }
-    };
+    }
   }, [data]);
 
   useEffect(() => {
-    getDatas();
+    getData(fetchData);
   }, []);
 
   return (
-    <div
-      className={styles.container}
-      ref={containerRef}
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflowY: "auto",
-      }}
-    >
-      {loading ? (
-        <div>Data is being fetched now...</div>
-      ) : (
-        data.map((data, index) => (
-          <div key={index}>
-            <Image
-              src={data.imgUrl}
-              alt={`${data._id}`}
-              style={{ objectFit: "contain" }}
-              width={700}
-              height={300}
-            />
-          </div>
-        ))
-      )}
-    </div>
+    <main className={styles.container} ref={containerRef}>
+      {data?.map((dt) => (
+        <div className={styles.imgBox}>
+          <Image src={`${dt.imgUrl}`} alt={`${dt._id}`} fill />
+        </div>
+      ))}
+    </main>
   );
 }
