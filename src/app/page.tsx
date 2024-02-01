@@ -54,13 +54,20 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (containerRef.current) {
-      const { scrollHeight, clientHeight, scrollTop } = containerRef.current;
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollHeight, clientHeight, scrollTop } = containerRef.current;
 
-      if (scrollTop + clientHeight >= scrollHeight) {
-        getData(fetchData);
+        if (scrollTop + clientHeight >= scrollHeight) {
+          getData(fetchData);
+        }
       }
-    }
+    };
+    document.addEventListener("scroll", handleScroll);
+
+    return () => {
+      document.removeEventListener("scroll", handleScroll);
+    };
   }, [data]);
 
   useEffect(() => {

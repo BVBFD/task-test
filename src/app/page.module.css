@@ -4,13 +4,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow-y: scroll;
 }
 
 .container .imgBox {
   position: relative;
   display: flex;
   justify-content: center;
-  width: 25%;
-  height: 20vh;
+  width: 30%;
+  height: 25vh;
   object-fit: contain;
+  object-fit: cover;
 }
