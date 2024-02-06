@@ -3,3 +3,15 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+html::-webkit-scrollbar {
+  width: 1rem;
+}
+
+html::-webkit-scrollbar-track {
+  background: white;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: black;
+}
