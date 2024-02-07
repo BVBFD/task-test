@@ -1,18 +1,23 @@
 .container {
-  width: 100%;
+  width: 500px;
+  height: 250px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow-y: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 .container .imgBox {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  width: 30%;
-  height: 25vh;
-  object-fit: contain;
-  object-fit: cover;
+  scroll-snap-align: center;
+}
+
+.container::-webkit-scrollbar {
+  height: 0.6rem;
+}
+
+.container::-webkit-scrollbar-track {
+  background: white;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: black;
 }
